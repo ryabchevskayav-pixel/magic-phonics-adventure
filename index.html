@@ -33,7 +33,7 @@
             z-index: 1;
         }
 
-        /* HUD */
+        /* HUD Styles */
         .hud {
             position: absolute; top: 20px; left: 20px; right: 20px;
             display: flex; justify-content: space-between; pointer-events: none; z-index: 500;
@@ -68,13 +68,10 @@
         #lvl-gem-container { 
             width: 32px; height: 32px; 
             display: flex; align-items: center; justify-content: center;
-            transition: 0.3s;
         }
-        #lvl-gem-container img {
-            max-width: 100%; max-height: 100%; object-fit: contain;
-        }
+        #lvl-gem-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-        /* ИГРОВЫЕ ЭЛЕМЕНТЫ */
+        /* Game Elements */
         .game-item {
             position: absolute; cursor: pointer; user-select: none;
             display: flex; align-items: center; justify-content: center;
@@ -104,7 +101,7 @@
             line-height: 1;
         }
 
-        /* МАСТЕРСКАЯ */
+        /* Workshop/Menu */
         #setup-menu {
             position: fixed; inset: 0; z-index: 1000;
             background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center;
@@ -117,16 +114,9 @@
         }
         .workshop-settings { flex: 1; padding: 30px 40px; overflow-y: auto; border-right: 1px solid var(--glass-border); }
         .workshop-preview { 
-            flex: 1; 
-            padding: 30px 40px; 
-            background: rgba(15,23,42,0.5); 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 20px;
-            text-align: center; 
-            overflow-y: auto; 
+            flex: 1; padding: 30px 40px; background: rgba(15,23,42,0.5); 
+            display: flex; flex-direction: column; align-items: center; 
+            justify-content: center; gap: 20px; text-align: center; overflow-y: auto; 
         }
 
         h2 { color: var(--pixar-gold); font-size: 28px; margin-top: 0; margin-bottom: 20px; }
@@ -154,11 +144,10 @@
         }
         .btn-start:active { transform: translateY(3px); box-shadow: 0 3px 0 #14532d; }
 
-        /* ЭКСПОРТ ПАНЕЛЬ */
+        /* Export Panel */
         .export-box {
             width: 100%; max-width: 320px; background: rgba(15, 23, 42, 0.6); border-radius: 24px;
-            padding: 20px; border: 1px solid var(--glass-border);
-            text-align: left; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            padding: 20px; border: 1px solid var(--glass-border); text-align: left;
         }
         .export-title { font-size: 15px; font-weight: 900; color: var(--pixar-gold); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
         .code-container {
@@ -174,8 +163,6 @@
             transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;
             box-shadow: 0 4px 0 #1e3a8a;
         }
-        .btn-copy:hover { background: #3b82f6; }
-        .btn-copy:active { transform: translateY(2px); box-shadow: 0 2px 0 #1e3a8a; }
 
         #feedback { position: fixed; top: 40%; left: 50%; transform: translate(-50%, -50%); z-index: 2000; pointer-events: none; }
         .feedback-text { font-size: 60px; font-weight: 900; color: var(--pixar-gold); text-shadow: 0 5px 15px rgba(0,0,0,0.5); }
@@ -195,6 +182,7 @@
         </div>
         <div class="hud-card">
             <div class="lives-container" id="hearts-box">
+                <!-- Hearts SVG here -->
                 <svg class="heart" viewBox="0 0 32 32"><path fill="#ff4d4d" d="M16 28.5L14.1 26.8C7.1 20.4 2.5 16.2 2.5 11C2.5 6.8 5.8 3.5 10 3.5C12.4 3.5 14.6 4.6 16 6.4C17.4 4.6 19.6 3.5 22 3.5C26.2 3.5 29.5 6.8 29.5 11C29.5 16.2 24.9 20.4 17.9 26.8L16 28.5Z"/></svg>
                 <svg class="heart" viewBox="0 0 32 32"><path fill="#ff4d4d" d="M16 28.5L14.1 26.8C7.1 20.4 2.5 16.2 2.5 11C2.5 6.8 5.8 3.5 10 3.5C12.4 3.5 14.6 4.6 16 6.4C17.4 4.6 19.6 3.5 22 3.5C26.2 3.5 29.5 6.8 29.5 11C29.5 16.2 24.9 20.4 17.9 26.8L16 28.5Z"/></svg>
                 <svg class="heart" viewBox="0 0 32 32"><path fill="#ff4d4d" d="M16 28.5L14.1 26.8C7.1 20.4 2.5 16.2 2.5 11C2.5 6.8 5.8 3.5 10 3.5C12.4 3.5 14.6 4.6 16 6.4C17.4 4.6 19.6 3.5 22 3.5C26.2 3.5 29.5 6.8 29.5 11C29.5 16.2 24.9 20.4 17.9 26.8L16 28.5Z"/></svg>
@@ -215,11 +203,11 @@
                 <div class="control-group">
                     <label>Выбери свой мир</label>
                     <select id="bg-select" onchange="updatePreview()">
-                        <option value="bg_underwater.jpg">Подводный мир</option>
-                        <option value="bg_forest.jpg">Волшебный лес</option>
-                        <option value="bg_space.jpg">Космос</option>
-                        <option value="bg_sunset.jpg">Закат</option>
-                        <option value="bg_park.jpg">Парк</option>
+                        <option value="magic-phonics-assets/bg_underwater.jpg">Подводный мир</option>
+                        <option value="magic-phonics-assets/bg_forest.jpg">Волшебный лес</option>
+                        <option value="magic-phonics-assets/bg_space.jpg">Космос</option>
+                        <option value="magic-phonics-assets/bg_sunset.jpg">Закат</option>
+                        <option value="magic-phonics-assets/bg_park.jpg">Парк</option>
                     </select>
                 </div>
                 <div class="control-group">
@@ -257,7 +245,7 @@
             </div>
 
             <div class="workshop-preview">
-                <div id="mini-view" style="width:320px; height:180px; border-radius:30px; background-size:cover; border:3px solid var(--pixar-blue); display:flex; align-items:center; justify-content:center; position:relative; background-color: #1e293b; box-shadow: 0 10px 20px rgba(0,0,0,0.3);">
+                <div id="mini-view" style="width:320px; height:180px; border-radius:30px; background-size:cover; border:3px solid var(--pixar-blue); display:flex; align-items:center; justify-content:center; position:relative;">
                     <div id="preview-bubble" style="width:100px; height:100px; border-radius:50%; display:flex; align-items:center; justify-content:center; position:relative;">
                         <img id="preview-item-img" src="" style="width:70px;">
                         <span id="preview-text" style="position:absolute; font-weight:900; color:white; text-shadow:1px 1px 3px black;">word</span>
@@ -267,10 +255,7 @@
                 <button class="btn-start" onclick="startGame()">Начать игру</button>
                 
                 <div class="export-box">
-                    <div class="export-title">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
-                        Код для Genially
-                    </div>
+                    <div class="export-title">⚙️ Код для Genially</div>
                     <div class="code-container" id="genially-code-text">Загрузка...</div>
                     <button class="btn-copy" onclick="copyGeniallyCode()">
                         <span id="copy-btn-text">Копировать код</span>
@@ -282,23 +267,23 @@
 
 <script>
     const ASSETS = {
-        bubbles: "https://cdn-icons-png.flaticon.com/512/3246/3246736.png",
-        hearts: "https://cdn-icons-png.flaticon.com/512/833/833472.png",
-        cakes: "https://cdn-icons-png.flaticon.com/512/1048/1048953.png",
-        ghosts: "https://cdn-icons-png.flaticon.com/512/616/616412.png",
-        pancakes: "https://cdn-icons-png.flaticon.com/512/2311/2311857.png"
+        bubbles: "magic-phonics-assets/bubbles.png",
+        hearts: "magic-phonics-assets/hearts.png",
+        cakes: "magic-phonics-assets/cakes.png",
+        ghosts: "magic-phonics-assets/ghosts.png",
+        pancakes: "magic-phonics-assets/pancakes.png"
     };
 
     const GEMS = {
-        1: "https://cdn-icons-png.flaticon.com/512/612/612803.png",
-        2: "https://cdn-icons-png.flaticon.com/512/612/612805.png",
-        3: "https://cdn-icons-png.flaticon.com/512/612/612799.png",
-        4: "https://cdn-icons-png.flaticon.com/512/612/612801.png"
+        1: "magic-phonics-assets/gem_1.png",
+        2: "magic-phonics-assets/gem_2.png",
+        3: "magic-phonics-assets/gem_3.png",
+        4: "magic-phonics-assets/gem_4.png"
     };
 
     const WORDS = {
         short: ["cat", "pig", "sun", "bus", "map", "net", "bin", "dog", "hot", "bat", "cup", "red", "hen", "fox", "box", "sit"],
-        long: ["cake", "kite", "bone", "rope", "tube", "note", "lake", "ride", "game", "nose", "pipe", "home"]
+        long: ["cake", "kite", "bone", "rope", "tube", "note", "lake", "ride", "game", "fire", "base", "nose", "pipe", "home"]
     };
 
     const LVL_CONFIG = [
@@ -327,34 +312,19 @@
     }
 
     function generateGeniallyCode() {
-        const config = {
-            bg: document.getElementById('bg-select').value,
-            itemKey: document.getElementById('item-select').value,
-            speed: document.getElementById('speed-range').value,
-            wordType: document.getElementById('word-type').value,
-            fontSize: FONT_SIZES[document.getElementById('font-range').value],
-            tasks: document.getElementById('tasks-range').value
-        };
-
-        const code = `<iframe src="https://example.com/magic-phonics?bg=${config.bg}&item=${config.itemKey}&speed=${config.speed}&words=${config.wordType}" width="100%" height="600" style="border:none; border-radius:20px;" allow="autoplay"></iframe>`;
+        const url = window.location.href.split('?')[0];
+        const code = `<iframe src="${url}" width="100%" height="600" style="border:none; border-radius:20px;" allow="autoplay"></iframe>`;
         document.getElementById('genially-code-text').innerText = code;
     }
 
     function copyGeniallyCode() {
         const code = document.getElementById('genially-code-text').innerText;
         const btnText = document.getElementById('copy-btn-text');
-        
         const textArea = document.createElement("textarea");
-        textArea.value = code;
-        document.body.appendChild(textArea);
+        textArea.value = code; document.body.appendChild(textArea);
         textArea.select();
-        try {
-            document.execCommand('copy');
-            btnText.innerText = "Скопировано!";
-            setTimeout(() => btnText.innerText = "Копировать код", 2000);
-        } catch (err) {
-            btnText.innerText = "Ошибка :(";
-        }
+        try { document.execCommand('copy'); btnText.innerText = "Скопировано!"; setTimeout(() => btnText.innerText = "Копировать код", 2000); }
+        catch (err) { btnText.innerText = "Ошибка :("; }
         document.body.removeChild(textArea);
     }
 
@@ -362,14 +332,10 @@
         const bg = document.getElementById('bg-select').value;
         const key = document.getElementById('item-select').value;
         const fontSizeKey = document.getElementById('font-range').value;
-        const previewBubble = document.getElementById('preview-bubble');
-        const previewText = document.getElementById('preview-text');
-        
         document.getElementById('mini-view').style.backgroundImage = `url(${bg})`;
         document.getElementById('preview-item-img').src = ASSETS[key];
-        previewText.style.fontSize = (FONT_SIZES[fontSizeKey] * 0.7) + "px";
-        
-        previewBubble.classList.toggle('bubble-effect', key === 'bubbles');
+        document.getElementById('preview-text').style.fontSize = (FONT_SIZES[fontSizeKey] * 0.7) + "px";
+        document.getElementById('preview-bubble').classList.toggle('bubble-effect', key === 'bubbles');
         generateGeniallyCode();
     }
 
@@ -390,10 +356,8 @@
         state.totalTasks = parseInt(document.getElementById('tasks-range').value);
         state.score = 0; state.currentTask = 0; state.lives = 3; state.level = 1;
         state.isPaused = false;
-        
         document.getElementById('game-canvas').style.backgroundImage = `url(${state.config.bg})`;
         document.getElementById('setup-menu').style.display = 'none';
-        
         updateHUD();
         spawnItems(6);
         setTimeout(pickTarget, 800);
@@ -411,26 +375,11 @@
         const word = pool[Math.floor(Math.random() * pool.length)];
         const div = document.createElement('div');
         div.className = 'game-item';
-        const size = 120;
-        div.style.width = size + 'px'; div.style.height = size + 'px';
-        
+        div.style.width = '120px'; div.style.height = '120px';
         let bubbleHtml = state.config.itemKey === 'bubbles' ? '<div class="bubble-effect"></div>' : '';
-        div.innerHTML = `
-            ${bubbleHtml}
-            <img src="${ASSETS[state.config.itemKey]}" class="item-img" onerror="this.style.opacity=0">
-            <span class="item-word" style="font-size: ${state.config.fontSize}px">${word}</span>
-        `;
+        div.innerHTML = `${bubbleHtml}<img src="${ASSETS[state.config.itemKey]}" class="item-img"><span class="item-word" style="font-size: ${state.config.fontSize}px">${word}</span>`;
         document.getElementById('game-canvas').appendChild(div);
-
-        const speedMultiplier = state.config.speed + (state.level * 0.2);
-        const item = {
-            el: div, word: word, 
-            x: Math.random() * (window.innerWidth - size - 40) + 20,
-            y: Math.random() * (window.innerHeight - size - 200) + 160,
-            w: size, h: size,
-            dx: (Math.random() - 0.5) * speedMultiplier * 3,
-            dy: (Math.random() - 0.5) * speedMultiplier * 3
-        };
+        const item = { el: div, word: word, x: Math.random()*800, y: Math.random()*400, w: 120, h: 120, dx: (Math.random()-0.5)*5, dy: (Math.random()-0.5)*5 };
         div.onclick = (e) => check(item, e);
         return item;
     }
@@ -441,7 +390,6 @@
             state.score += 10; state.currentTask++;
             showFeedback("Верно! ✨");
             item.el.style.transform += " scale(0)";
-            item.el.style.opacity = "0";
             setTimeout(() => {
                 item.el.remove();
                 state.items = state.items.filter(i => i !== item);
@@ -461,23 +409,18 @@
     function nextLevel() {
         if(state.level < 4) state.level++;
         state.currentTask = 0;
-        showFeedback("Ура! Новый уровень 🏆");
+        showFeedback("Ура! Уровень пройден 🏆");
         updateHUD();
         setTimeout(pickTarget, 1500);
     }
 
     function updateHUD() {
         document.getElementById('score-val').innerText = state.score;
-        const hearts = document.querySelectorAll('.heart');
-        hearts.forEach((h, idx) => h.classList.toggle('lost', idx >= state.lives));
-        
-        const progress = (state.currentTask / state.totalTasks) * 100;
-        document.getElementById('progress-fill').style.width = progress + "%";
-        
-        const cfg = LVL_CONFIG[Math.min(state.level - 1, LVL_CONFIG.length - 1)];
+        document.querySelectorAll('.heart').forEach((h, i) => h.classList.toggle('lost', i >= state.lives));
+        document.getElementById('progress-fill').style.width = (state.currentTask/state.totalTasks)*100 + "%";
+        const cfg = LVL_CONFIG[Math.min(state.level-1, 3)];
         document.getElementById('lvl-name').innerText = cfg.name;
         document.getElementById('lvl-name').style.color = cfg.color;
-        
         document.getElementById('lvl-gem-img').src = GEMS[state.level];
     }
 
@@ -485,8 +428,8 @@
         if(!state.isPaused) {
             state.items.forEach(i => {
                 i.x += i.dx; i.y += i.dy;
-                if(i.x <= 10 || i.x >= window.innerWidth - i.w - 10) i.dx *= -1;
-                if(i.y <= 140 || i.y >= window.innerHeight - i.h - 20) i.dy *= -1;
+                if(i.x <= 0 || i.x >= window.innerWidth-120) i.dx *= -1;
+                if(i.y <= 120 || i.y >= window.innerHeight-120) i.dy *= -1;
                 i.el.style.transform = `translate(${i.x}px, ${i.y}px)`;
             });
         }
@@ -496,30 +439,34 @@
     function showFeedback(txt) {
         const f = document.getElementById('feedback');
         f.innerHTML = `<div class="feedback-text">${txt}</div>`;
-        const el = f.firstChild;
-        setTimeout(() => el.style.opacity = "0", 800);
+        setTimeout(() => f.firstChild.style.opacity = "0", 800);
     }
 
     function pickTarget() {
         if(state.isPaused) return;
-        const t = state.items[Math.floor(Math.random() * state.items.length)];
-        state.target = t.word;
+        state.target = state.items[Math.floor(Math.random()*state.items.length)].word;
         speak(state.target);
     }
 
-    function speak(txt) {
+    async function speak(txt) {
         if (!window.speechSynthesis) return;
-        window.speechSynthesis.cancel();
-        const msg = new SpeechSynthesisUtterance(txt);
-        msg.lang = 'en-US';
-        msg.rate = 0.85;
-        window.speechSynthesis.speak(msg);
+        // Попытка воспроизвести аудиофайл из папки
+        const audioPath = `magic-phonics-assets/audio/${txt}.mp3`;
+        const audio = new Audio(audioPath);
+        
+        try {
+            await audio.play();
+        } catch (e) {
+            // Если файла нет, используем системный голос
+            window.speechSynthesis.cancel();
+            const msg = new SpeechSynthesisUtterance(txt);
+            msg.lang = 'en-US';
+            msg.rate = 0.8;
+            window.speechSynthesis.speak(msg);
+        }
     }
 
-    window.onload = () => {
-        updatePreview();
-        updateHUD();
-    };
+    window.onload = updatePreview;
 </script>
 </body>
 </html>

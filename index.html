@@ -337,6 +337,26 @@
         document.getElementById('preview-text').style.fontSize = (FONT_SIZES[fontSizeKey] * 0.7) + "px";
         document.getElementById('preview-bubble').classList.remove('bubble-effect');
         generateGeniallyCode();
+            // --- ВСТАВИТЬ ЭТО В КОНЕЦ ФУНКЦИИ updatePreview ---
+    
+    // 1. Собираем текущие настройки
+    const params = new URLSearchParams({
+        bg: document.getElementById('bg-select').value,
+        item: document.getElementById('item-select').value,
+        font: document.getElementById('font-range').value,
+        type: document.getElementById('word-type').value,
+        count: document.getElementById('tasks-range').value,
+        speed: document.getElementById('speed-range').value,
+        auto: 'true' // Команда запускать игру сразу
+    });
+
+    // 2. Формируем ссылку (берет текущий адрес страницы)
+    const baseUrl = window.location.href.split('?')[0];
+    const fullUrl = `${baseUrl}?${params.toString()}`;
+
+    // 3. Обновляем код для Genially
+    const iframeCode = `<iframe src="${fullUrl}" width="100%" height="600" style="border:none; border-radius:20px;" allow="autoplay"></iframe>`;
+    document.getElementById('genially-code-text').innerText = iframeCode;
     }
 
     function openMenu() {
@@ -465,10 +485,37 @@
         }
     }
 
-    window.onload = updatePreview;
+    // --- ВСТАВИТЬ ЭТО В САМЫЙ КОНЕЦ ВМЕСТО window.onload = updatePreview ---
+
+    function checkUrlParams() {
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // Если есть параметр auto=true, применяем настройки
+        if (urlParams.get('auto') === 'true') {
+            if(urlParams.get('bg')) document.getElementById('bg-select').value = urlParams.get('bg');
+            if(urlParams.get('item')) document.getElementById('item-select').value = urlParams.get('item');
+            if(urlParams.get('font')) document.getElementById('font-range').value = urlParams.get('font');
+            if(urlParams.get('type')) document.getElementById('word-type').value = urlParams.get('type');
+            if(urlParams.get('count')) document.getElementById('tasks-range').value = urlParams.get('count');
+            if(urlParams.get('speed')) document.getElementById('speed-range').value = urlParams.get('speed');
+            
+            return true;
+        }
+        return false;
+    }
+
+    window.onload = () => {
+        if (checkUrlParams()) {
+            document.getElementById('setup-menu').style.display = 'none'; // Скрываем меню
+            startGame(); // Сразу запускаем игру!
+        } else {
+            updatePreview(); // Иначе показываем меню как обычно
+        }
+    };
 </script>
 </body>
 </html>
+
 
 
 

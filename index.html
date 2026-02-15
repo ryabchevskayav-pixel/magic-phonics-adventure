@@ -375,7 +375,7 @@
         const word = pool[Math.floor(Math.random() * pool.length)];
         const div = document.createElement('div');
         div.className = 'game-item';
-        div.style.width = '120px'; div.style.height = '120px';
+        div.style.width = '140px'; div.style.height = '140px';
         let bubbleHtml = ''; // Убрали второй контур
         div.innerHTML = `${bubbleHtml}<img src="${ASSETS[state.config.itemKey]}" class="item-img"><span class="item-word" style="font-size: ${state.config.fontSize}px">${word}</span>`;
         document.getElementById('game-canvas').appendChild(div);
@@ -469,6 +469,7 @@
 </script>
 </body>
 </html>
+
 
 
 

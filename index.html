@@ -202,17 +202,17 @@
                 <div class="control-group">
                     <label>Выбери свой мир</label>
                     <select id="bg-select" onchange="updatePreview()">
-                        <option value="magic-phonics-assets/underwater.jpg">Подводный мир</option>
-                        <option value="magic-phonics-assets/forest.jpg">Волшебный лес</option>
-                        <option value="magic-phonics-assets/space.jpg">Космос</option>
-                        <option value="magic-phonics-assets/sunset.jpg">Закат</option>
-                        <option value="magic-phonics-assets/park.jpg">Парк</option>
+                        <option value="magic-phonics-assets/backgrounds/underwater.jpg">Подводный мир</option>
+                        <option value="magic-phonics-assets/backgrounds/forest.jpg">Волшебный лес</option>
+                        <option value="magic-phonics-assets/backgrounds/space.jpg">Космос</option>
+                        <option value="magic-phonics-assets/backgrounds/sunset.jpg">Закат</option>
+                        <option value="magic-phonics-assets/backgrounds/park.jpg">Парк</option>
                     </select>
                 </div>
                 <div class="control-group">
                     <label>Волшебный предмет</label>
                     <select id="item-select" onchange="updatePreview()">
-                        <option value="bubbles">🫧 Пузырьки</option>
+                        <option value="bubbles"> ○ Пузырьки</option>
                         <option value="hearts">❤️ Сердечки</option>
                         <option value="cakes">🍰 Пирожные</option>
                         <option value="ghosts">👻 Привидения</option>
@@ -227,8 +227,8 @@
                 <div class="control-group">
                     <label>Тип слогов</label>
                     <select id="word-type" onchange="updatePreview()">
-                        <option value="short">Закрытый (cat, pig)</option>
-                        <option value="long">Открытый (cake, bone)</option>
+                        <option value="short">Просто (cat, pig)</option>
+                        <option value="long">Сложнее (cake, bone)</option>
                         <option value="mixed">Всё вперемешку!</option>
                     </select>
                 </div>
@@ -267,11 +267,11 @@
 <script>
     // Пути обновлены точно по твоей папке
     const ASSETS = {
-        bubbles: "magic-phonics-assets/bubbles.png",
-        hearts: "magic-phonics-assets/hearts.png",
-        cakes: "magic-phonics-assets/cakes.png",
-        ghosts: "magic-phonics-assets/ghosts.png",
-        pancakes: "magic-phonics-assets/pancakes.png"
+        bubbles: "magic-phonics-assets/bubble.png",
+        hearts: "magic-phonics-assets/heart.png",
+        cakes: "magic-phonics-assets/cake.png",
+        ghosts: "magic-phonics-assets/ghost.png",
+        pancakes: "magic-phonics-assets/pancake.png"
     };
 
     const GEMS = {
@@ -469,4 +469,5 @@
 </script>
 </body>
 </html>
+
 

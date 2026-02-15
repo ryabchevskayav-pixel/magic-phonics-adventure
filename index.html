@@ -283,7 +283,7 @@
 
     const WORDS = {
         short: ["cat", "pig", "sun", "bus", "map", "net", "bin", "dog", "hot", "bat", "cup", "red", "hen", "fox", "box", "sit"],
-        long: ["cake", "kite", "bone", "rope", "tube", "note", "lake", "ride", "game", "fire", "base", "nose", "pipe", "home"]
+        long: ["cake", "kite", "bone", "rope", "tube", "note", "lake", "ride", "game", "nose", "pipe", "home"]
     };
 
     const LVL_CONFIG = [
@@ -335,7 +335,7 @@
         document.getElementById('mini-view').style.backgroundImage = `url(${bg})`;
         document.getElementById('preview-item-img').src = ASSETS[key];
         document.getElementById('preview-text').style.fontSize = (FONT_SIZES[fontSizeKey] * 0.7) + "px";
-        document.getElementById('preview-bubble').classList.toggle('bubble-effect', key === 'bubbles');
+        document.getElementById('preview-bubble').classList.remove('bubble-effect');
         generateGeniallyCode();
     }
 
@@ -376,7 +376,7 @@
         const div = document.createElement('div');
         div.className = 'game-item';
         div.style.width = '120px'; div.style.height = '120px';
-        let bubbleHtml = state.config.itemKey === 'bubbles' ? '<div class="bubble-effect"></div>' : '';
+        let bubbleHtml = ''; // Убрали второй контур
         div.innerHTML = `${bubbleHtml}<img src="${ASSETS[state.config.itemKey]}" class="item-img"><span class="item-word" style="font-size: ${state.config.fontSize}px">${word}</span>`;
         document.getElementById('game-canvas').appendChild(div);
         const item = { el: div, word: word, x: Math.random()* (window.innerWidth - 120), y: Math.random()* (window.innerHeight - 240) + 120, w: 120, h: 120, dx: (Math.random()-0.5)* (state.config.speed * 3), dy: (Math.random()-0.5)* (state.config.speed * 3) };
@@ -469,6 +469,7 @@
 </script>
 </body>
 </html>
+
 
 
 

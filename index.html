@@ -182,7 +182,6 @@
         </div>
         <div class="hud-card">
             <div class="lives-container" id="hearts-box">
-                <!-- Hearts SVG here -->
                 <svg class="heart" viewBox="0 0 32 32"><path fill="#ff4d4d" d="M16 28.5L14.1 26.8C7.1 20.4 2.5 16.2 2.5 11C2.5 6.8 5.8 3.5 10 3.5C12.4 3.5 14.6 4.6 16 6.4C17.4 4.6 19.6 3.5 22 3.5C26.2 3.5 29.5 6.8 29.5 11C29.5 16.2 24.9 20.4 17.9 26.8L16 28.5Z"/></svg>
                 <svg class="heart" viewBox="0 0 32 32"><path fill="#ff4d4d" d="M16 28.5L14.1 26.8C7.1 20.4 2.5 16.2 2.5 11C2.5 6.8 5.8 3.5 10 3.5C12.4 3.5 14.6 4.6 16 6.4C17.4 4.6 19.6 3.5 22 3.5C26.2 3.5 29.5 6.8 29.5 11C29.5 16.2 24.9 20.4 17.9 26.8L16 28.5Z"/></svg>
                 <svg class="heart" viewBox="0 0 32 32"><path fill="#ff4d4d" d="M16 28.5L14.1 26.8C7.1 20.4 2.5 16.2 2.5 11C2.5 6.8 5.8 3.5 10 3.5C12.4 3.5 14.6 4.6 16 6.4C17.4 4.6 19.6 3.5 22 3.5C26.2 3.5 29.5 6.8 29.5 11C29.5 16.2 24.9 20.4 17.9 26.8L16 28.5Z"/></svg>
@@ -266,6 +265,7 @@
     </div>
 
 <script>
+    // Пути обновлены точно по твоей папке
     const ASSETS = {
         bubbles: "magic-phonics-assets/bubbles.png",
         hearts: "magic-phonics-assets/hearts.png",
@@ -379,7 +379,7 @@
         let bubbleHtml = state.config.itemKey === 'bubbles' ? '<div class="bubble-effect"></div>' : '';
         div.innerHTML = `${bubbleHtml}<img src="${ASSETS[state.config.itemKey]}" class="item-img"><span class="item-word" style="font-size: ${state.config.fontSize}px">${word}</span>`;
         document.getElementById('game-canvas').appendChild(div);
-        const item = { el: div, word: word, x: Math.random()*800, y: Math.random()*400, w: 120, h: 120, dx: (Math.random()-0.5)*5, dy: (Math.random()-0.5)*5 };
+        const item = { el: div, word: word, x: Math.random()* (window.innerWidth - 120), y: Math.random()* (window.innerHeight - 240) + 120, w: 120, h: 120, dx: (Math.random()-0.5)* (state.config.speed * 3), dy: (Math.random()-0.5)* (state.config.speed * 3) };
         div.onclick = (e) => check(item, e);
         return item;
     }
@@ -439,7 +439,8 @@
     function showFeedback(txt) {
         const f = document.getElementById('feedback');
         f.innerHTML = `<div class="feedback-text">${txt}</div>`;
-        setTimeout(() => f.firstChild.style.opacity = "0", 800);
+        const el = f.firstChild;
+        setTimeout(() => el.style.opacity = "0", 800);
     }
 
     function pickTarget() {
@@ -450,14 +451,12 @@
 
     async function speak(txt) {
         if (!window.speechSynthesis) return;
-        // Попытка воспроизвести аудиофайл из папки
-        const audioPath = `magic-phonics-assets/audio/${txt}.mp3`;
+        const audioPath = `magic-phonics-assets/audio/${txt.toLowerCase()}.mp3`;
         const audio = new Audio(audioPath);
         
         try {
             await audio.play();
         } catch (e) {
-            // Если файла нет, используем системный голос
             window.speechSynthesis.cancel();
             const msg = new SpeechSynthesisUtterance(txt);
             msg.lang = 'en-US';

@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magic Phonics Adventure</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@800;900&display=swap');
+
+        :root {
+            --pixar-blue: #2e5cb8;
+            --pixar-gold: #ffcc00;
+            --pixar-red: #ff4d4d;
+            --pixar-green: #4ade80;
+            --ui-bg: rgba(15, 23, 42, 0.9);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --shadow-3d: 0 10px 30px rgba(0,0,0,0.5);
+            --slider-track: #334155;
+            --slider-thumb: #ffcc00;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body, html { 
+            margin: 0; padding: 0; width: 100%; height: 100%; 
+            overflow: hidden; font-family: 'Nunito', sans-serif;
+            background: #020617; color: white;
+        }
+
+        #game-canvas {
+            position: fixed; inset: 0;
+            background-size: cover; background-position: center;
+            transition: 0.8s ease;
+            z-index: 1;
+        }
+
+        /* HUD */
+        .hud {
+            position: absolute; top: 20px; left: 20px; right: 20px;
+            display: flex; justify-content: space-between; pointer-events: none; z-index: 500;
+        }
+
+        .hud-card {
+            background: var(--ui-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 10px 20px;
+            display: flex; align-items: center; gap: 15px;
+            box-shadow: var(--shadow-3d);
+            pointer-events: auto;
+        }
+
+        .lives-container { display: flex; gap: 6px; }
+        .heart { width: 32px; height: 32px; transition: 0.3s; filter: drop-shadow(0 0 5px rgba(255,77,77,0.4)); }
+        .heart.lost { filter: grayscale(1) opacity(0.2); transform: scale(0.8); }
+
+        .progress-flask {
+            width: 140px; height: 12px; background: rgba(255,255,255,0.1);
+            border-radius: 10px; overflow: hidden; position: relative;
+        }
+        #progress-fill {
+            height: 100%; width: 0%; background: linear-gradient(90deg, #4ade80, #2dd4bf);
+            transition: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        #lvl-name { font-weight: 900; font-size: 14px; margin-bottom: 2px; transition: 0.3s; }
+        
+        #lvl-gem-container { 
+            width: 32px; height: 32px; 
+            display: flex; align-items: center; justify-content: center;
+            transition: 0.3s;
+        }
+        #lvl-gem-container img {
+            max-width: 100%; max-height: 100%; object-fit: contain;
+        }
+
+        /* ИГРОВЫЕ ЭЛЕМЕНТЫ */
+        .game-item {
+            position: absolute; cursor: pointer; user-select: none;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 10; will-change: transform;
+        }
+        
+        .bubble-effect {
+            position: absolute; width: 100%; height: 100%;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3), rgba(255,255,255,0.05));
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(2px);
+            box-shadow: inset 0 10px 20px rgba(255,255,255,0.2), inset 0 -10px 20px rgba(0,0,0,0.1);
+        }
+
+        .item-img { width: 80%; height: 80%; object-fit: contain; z-index: 2; transition: transform 0.2s ease; }
+        .game-item:hover .item-img { transform: scale(1.1); }
+
+        .item-word {
+            position: absolute; font-weight: 900; 
+            z-index: 3; color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8), 0 0 10px rgba(0,0,0,0.5);
+            pointer-events: none;
+            text-align: center;
+            width: 98%;
+            word-wrap: break-word;
+            line-height: 1;
+        }
+
+        /* МАСТЕРСКАЯ */
+        #setup-menu {
+            position: fixed; inset: 0; z-index: 1000;
+            background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+        .workshop-panel {
+            background: #1e293b; width: 95%; max-width: 1000px; height: 90vh;
+            border-radius: 40px; border: 4px solid var(--pixar-blue);
+            display: flex; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+        }
+        .workshop-settings { flex: 1; padding: 30px 40px; overflow-y: auto; border-right: 1px solid var(--glass-border); }
+        .workshop-preview { 
+            flex: 1; 
+            padding: 30px 40px; 
+            background: rgba(15,23,42,0.5); 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 20px;
+            text-align: center; 
+            overflow-y: auto; 
+        }
+
+        h2 { color: var(--pixar-gold); font-size: 28px; margin-top: 0; margin-bottom: 20px; }
+        .control-group { margin-bottom: 20px; }
+        label { display: block; font-weight: 800; color: #94a3b8; font-size: 13px; margin-bottom: 8px; }
+        
+        select {
+            width: 100%; padding: 12px; background: #334155; border: none;
+            color: white; border-radius: 15px; font-size: 15px; font-family: inherit; font-weight: 700;
+            outline: none; border: 2px solid transparent; transition: 0.3s;
+        }
+        select:focus { border-color: var(--pixar-gold); }
+
+        input[type="range"] { -webkit-appearance: none; width: 100%; background: transparent; cursor: pointer; height: 30px; }
+        input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 10px; background: #334155; border-radius: 10px; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; height: 24px; width: 24px; border-radius: 50%; background: var(--pixar-gold); margin-top: -7px; border: 2px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+
+        .speed-hint, .font-hint { display: block; text-align: center; font-size: 12px; font-weight: 900; color: var(--pixar-gold); margin-top: 5px; text-transform: uppercase; }
+
+        .btn-start {
+            background: linear-gradient(180deg, #4ade80, #16a34a);
+            color: white; width: 100%; max-width: 320px; padding: 20px; border-radius: 25px;
+            border: none; font-size: 24px; font-weight: 900; cursor: pointer;
+            box-shadow: 0 6px 0 #14532d; transition: 0.1s;
+        }
+        .btn-start:active { transform: translateY(3px); box-shadow: 0 3px 0 #14532d; }
+
+        /* ЭКСПОРТ ПАНЕЛЬ */
+        .export-box {
+            width: 100%; max-width: 320px; background: rgba(15, 23, 42, 0.6); border-radius: 24px;
+            padding: 20px; border: 1px solid var(--glass-border);
+            text-align: left; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .export-title { font-size: 15px; font-weight: 900; color: var(--pixar-gold); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .code-container {
+            background: rgba(0, 0, 0, 0.4); border-radius: 12px; padding: 12px;
+            font-family: 'Courier New', monospace; font-size: 11px; color: #4ade80;
+            height: 90px; overflow-y: auto; border: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 15px; word-break: break-all; line-height: 1.4;
+        }
+        .btn-copy {
+            background: var(--pixar-blue); color: white; width: 100%;
+            padding: 12px; border-radius: 14px; border: none;
+            font-weight: 800; font-size: 14px; cursor: pointer;
+            transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;
+            box-shadow: 0 4px 0 #1e3a8a;
+        }
+        .btn-copy:hover { background: #3b82f6; }
+        .btn-copy:active { transform: translateY(2px); box-shadow: 0 2px 0 #1e3a8a; }
+
+        #feedback { position: fixed; top: 40%; left: 50%; transform: translate(-50%, -50%); z-index: 2000; pointer-events: none; }
+        .feedback-text { font-size: 60px; font-weight: 900; color: var(--pixar-gold); text-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+    </style>
+</head>
+<body>
+
+    <div id="game-canvas"></div>
+
+    <div class="hud">
+        <div class="hud-card">
+            <div id="lvl-gem-container"><img id="lvl-gem-img" src="" alt="Gem"></div>
+            <div>
+                <div id="lvl-name">Уровень 1</div>
+                <div class="progress-flask"><div id="progress-fill"></div></div>
+            </div>
+        </div>
+        <div class="hud-card">
+            <div class="lives-container" id="hearts-box">
+                <svg class="heart" viewBox="0 0 32 32"><path fill="#ff4d4d" d="M16 28.5L14.1 26.8C7.1 20.4 2.5 16.2 2.5 11C2.5 6.8 5.8 3.5 10 3.5C12.4 3.5 14.6 4.6 16 6.4C17.4 4.6 19.6 3.5 22 3.5C26.2 3.5 29.5 6.8 29.5 11C29.5 16.2 24.9 20.4 17.9 26.8L16 28.5Z"/></svg>
+                <svg class="heart" viewBox="0 0 32 32"><path fill="#ff4d4d" d="M16 28.5L14.1 26.8C7.1 20.4 2.5 16.2 2.5 11C2.5 6.8 5.8 3.5 10 3.5C12.4 3.5 14.6 4.6 16 6.4C17.4 4.6 19.6 3.5 22 3.5C26.2 3.5 29.5 6.8 29.5 11C29.5 16.2 24.9 20.4 17.9 26.8L16 28.5Z"/></svg>
+                <svg class="heart" viewBox="0 0 32 32"><path fill="#ff4d4d" d="M16 28.5L14.1 26.8C7.1 20.4 2.5 16.2 2.5 11C2.5 6.8 5.8 3.5 10 3.5C12.4 3.5 14.6 4.6 16 6.4C17.4 4.6 19.6 3.5 22 3.5C26.2 3.5 29.5 6.8 29.5 11C29.5 16.2 24.9 20.4 17.9 26.8L16 28.5Z"/></svg>
+            </div>
+        </div>
+        <div class="hud-card">
+            <div style="font-size: 20px; font-weight: 900; color: var(--pixar-gold);">⭐ <span id="score-val">0</span></div>
+            <button onclick="openMenu()" style="background:none; border:none; cursor:pointer; font-size:24px; margin-left:10px;">⚙️</button>
+        </div>
+    </div>
+
+    <div id="feedback"></div>
+
+    <div id="setup-menu">
+        <div class="workshop-panel">
+            <div class="workshop-settings">
+                <h2>Мастерская игры</h2>
+                <div class="control-group">
+                    <label>Выбери свой мир</label>
+                    <select id="bg-select" onchange="updatePreview()">
+                        <option value="bg_underwater.jpg">Подводный мир</option>
+                        <option value="bg_forest.jpg">Волшебный лес</option>
+                        <option value="bg_space.jpg">Космос</option>
+                        <option value="bg_sunset.jpg">Закат</option>
+                        <option value="bg_park.jpg">Парк</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Волшебный предмет</label>
+                    <select id="item-select" onchange="updatePreview()">
+                        <option value="bubbles">🫧 Пузырьки</option>
+                        <option value="hearts">❤️ Сердечки</option>
+                        <option value="cakes">🍰 Пирожные</option>
+                        <option value="ghosts">👻 Привидения</option>
+                        <option value="pancakes">🥞 Блины</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Размер шрифта</label>
+                    <input type="range" id="font-range" min="1" max="4" value="3" oninput="updateFontHint(this.value); updatePreview();">
+                    <span id="font-hint" class="font-hint">Очень крупный</span>
+                </div>
+                <div class="control-group">
+                    <label>Тип слогов</label>
+                    <select id="word-type" onchange="updatePreview()">
+                        <option value="short">Закрытый (cat, pig)</option>
+                        <option value="long">Открытый (cake, bone)</option>
+                        <option value="mixed">Всё вперемешку!</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Заданий в уровне: <span id="tasks-label" style="color: var(--pixar-gold)">7</span></label>
+                    <input type="range" id="tasks-range" min="5" max="10" value="7" oninput="document.getElementById('tasks-label').innerText=this.value; updatePreview();">
+                </div>
+                <div class="control-group">
+                    <label>Скорость игры</label>
+                    <input type="range" id="speed-range" min="1" max="5" value="2" oninput="updateSpeedHint(this.value); updatePreview();">
+                    <span id="speed-hint" class="speed-hint">Нормально</span>
+                </div>
+            </div>
+
+            <div class="workshop-preview">
+                <div id="mini-view" style="width:320px; height:180px; border-radius:30px; background-size:cover; border:3px solid var(--pixar-blue); display:flex; align-items:center; justify-content:center; position:relative; background-color: #1e293b; box-shadow: 0 10px 20px rgba(0,0,0,0.3);">
+                    <div id="preview-bubble" style="width:100px; height:100px; border-radius:50%; display:flex; align-items:center; justify-content:center; position:relative;">
+                        <img id="preview-item-img" src="" style="width:70px;">
+                        <span id="preview-text" style="position:absolute; font-weight:900; color:white; text-shadow:1px 1px 3px black;">word</span>
+                    </div>
+                </div>
+                
+                <button class="btn-start" onclick="startGame()">Начать игру</button>
+                
+                <div class="export-box">
+                    <div class="export-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                        Код для Genially
+                    </div>
+                    <div class="code-container" id="genially-code-text">Загрузка...</div>
+                    <button class="btn-copy" onclick="copyGeniallyCode()">
+                        <span id="copy-btn-text">Копировать код</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const ASSETS = {
+        bubbles: "https://cdn-icons-png.flaticon.com/512/3246/3246736.png",
+        hearts: "https://cdn-icons-png.flaticon.com/512/833/833472.png",
+        cakes: "https://cdn-icons-png.flaticon.com/512/1048/1048953.png",
+        ghosts: "https://cdn-icons-png.flaticon.com/512/616/616412.png",
+        pancakes: "https://cdn-icons-png.flaticon.com/512/2311/2311857.png"
+    };
+
+    const GEMS = {
+        1: "https://cdn-icons-png.flaticon.com/512/612/612803.png",
+        2: "https://cdn-icons-png.flaticon.com/512/612/612805.png",
+        3: "https://cdn-icons-png.flaticon.com/512/612/612799.png",
+        4: "https://cdn-icons-png.flaticon.com/512/612/612801.png"
+    };
+
+    const WORDS = {
+        short: ["cat", "pig", "sun", "bus", "map", "net", "bin", "dog", "hot", "bat", "cup", "red", "hen", "fox", "box", "sit"],
+        long: ["cake", "kite", "bone", "rope", "tube", "note", "lake", "ride", "game", "nose", "pipe", "home"]
+    };
+
+    const LVL_CONFIG = [
+        { name: "Green level", color: "#4ade80" },
+        { name: "Blue level", color: "#60a5fa" },
+        { name: "Purple level", color: "#c084fc" },
+        { name: "Red level", color: "#f87171" }
+    ];
+
+    const FONT_SIZES = { 1: 32, 2: 44, 3: 56, 4: 64 };
+
+    let state = {
+        score: 0, currentTask: 0, totalTasks: 7, lives: 3, level: 1,
+        items: [], target: "", isPaused: true,
+        config: { bg: "", itemKey: "bubbles", speed: 2, wordType: "short", fontSize: 56 }
+    };
+
+    function updateSpeedHint(val) {
+        const hints = ["Медленно", "Нормально", "Быстро", "Турбо", "Молния"];
+        document.getElementById('speed-hint').innerText = hints[val - 1];
+    }
+
+    function updateFontHint(val) {
+        const hints = ["Обычный", "Крупный", "Очень крупный", "Гигантский"];
+        document.getElementById('font-hint').innerText = hints[val - 1];
+    }
+
+    function generateGeniallyCode() {
+        const config = {
+            bg: document.getElementById('bg-select').value,
+            itemKey: document.getElementById('item-select').value,
+            speed: document.getElementById('speed-range').value,
+            wordType: document.getElementById('word-type').value,
+            fontSize: FONT_SIZES[document.getElementById('font-range').value],
+            tasks: document.getElementById('tasks-range').value
+        };
+
+        const code = `<iframe src="https://example.com/magic-phonics?bg=${config.bg}&item=${config.itemKey}&speed=${config.speed}&words=${config.wordType}" width="100%" height="600" style="border:none; border-radius:20px;" allow="autoplay"></iframe>`;
+        document.getElementById('genially-code-text').innerText = code;
+    }
+
+    function copyGeniallyCode() {
+        const code = document.getElementById('genially-code-text').innerText;
+        const btnText = document.getElementById('copy-btn-text');
+        
+        const textArea = document.createElement("textarea");
+        textArea.value = code;
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+            document.execCommand('copy');
+            btnText.innerText = "Скопировано!";
+            setTimeout(() => btnText.innerText = "Копировать код", 2000);
+        } catch (err) {
+            btnText.innerText = "Ошибка :(";
+        }
+        document.body.removeChild(textArea);
+    }
+
+    function updatePreview() {
+        const bg = document.getElementById('bg-select').value;
+        const key = document.getElementById('item-select').value;
+        const fontSizeKey = document.getElementById('font-range').value;
+        const previewBubble = document.getElementById('preview-bubble');
+        const previewText = document.getElementById('preview-text');
+        
+        document.getElementById('mini-view').style.backgroundImage = `url(${bg})`;
+        document.getElementById('preview-item-img').src = ASSETS[key];
+        previewText.style.fontSize = (FONT_SIZES[fontSizeKey] * 0.7) + "px";
+        
+        previewBubble.classList.toggle('bubble-effect', key === 'bubbles');
+        generateGeniallyCode();
+    }
+
+    function openMenu() {
+        state.isPaused = true;
+        document.getElementById('setup-menu').style.display = 'flex';
+        generateGeniallyCode();
+    }
+
+    function startGame() {
+        state.config = {
+            bg: document.getElementById('bg-select').value,
+            itemKey: document.getElementById('item-select').value,
+            speed: parseInt(document.getElementById('speed-range').value),
+            wordType: document.getElementById('word-type').value,
+            fontSize: FONT_SIZES[document.getElementById('font-range').value]
+        };
+        state.totalTasks = parseInt(document.getElementById('tasks-range').value);
+        state.score = 0; state.currentTask = 0; state.lives = 3; state.level = 1;
+        state.isPaused = false;
+        
+        document.getElementById('game-canvas').style.backgroundImage = `url(${state.config.bg})`;
+        document.getElementById('setup-menu').style.display = 'none';
+        
+        updateHUD();
+        spawnItems(6);
+        setTimeout(pickTarget, 800);
+        requestAnimationFrame(gameLoop);
+    }
+
+    function spawnItems(count) {
+        document.querySelectorAll('.game-item').forEach(e => e.remove());
+        state.items = [];
+        for(let i=0; i<count; i++) state.items.push(createItem());
+    }
+
+    function createItem() {
+        let pool = state.config.wordType === 'mixed' ? [...WORDS.short, ...WORDS.long] : WORDS[state.config.wordType];
+        const word = pool[Math.floor(Math.random() * pool.length)];
+        const div = document.createElement('div');
+        div.className = 'game-item';
+        const size = 120;
+        div.style.width = size + 'px'; div.style.height = size + 'px';
+        
+        let bubbleHtml = state.config.itemKey === 'bubbles' ? '<div class="bubble-effect"></div>' : '';
+        div.innerHTML = `
+            ${bubbleHtml}
+            <img src="${ASSETS[state.config.itemKey]}" class="item-img" onerror="this.style.opacity=0">
+            <span class="item-word" style="font-size: ${state.config.fontSize}px">${word}</span>
+        `;
+        document.getElementById('game-canvas').appendChild(div);
+
+        const speedMultiplier = state.config.speed + (state.level * 0.2);
+        const item = {
+            el: div, word: word, 
+            x: Math.random() * (window.innerWidth - size - 40) + 20,
+            y: Math.random() * (window.innerHeight - size - 200) + 160,
+            w: size, h: size,
+            dx: (Math.random() - 0.5) * speedMultiplier * 3,
+            dy: (Math.random() - 0.5) * speedMultiplier * 3
+        };
+        div.onclick = (e) => check(item, e);
+        return item;
+    }
+
+    function check(item, e) {
+        if(state.isPaused) return;
+        if(item.word === state.target) {
+            state.score += 10; state.currentTask++;
+            showFeedback("Верно! ✨");
+            item.el.style.transform += " scale(0)";
+            item.el.style.opacity = "0";
+            setTimeout(() => {
+                item.el.remove();
+                state.items = state.items.filter(i => i !== item);
+                state.items.push(createItem());
+                if(state.currentTask >= state.totalTasks) nextLevel();
+                else pickTarget();
+            }, 300);
+        } else {
+            state.lives--;
+            showFeedback("Ой! 💔");
+            if(state.lives <= 0) { state.isPaused = true; setTimeout(openMenu, 1500); }
+            else speak(state.target);
+        }
+        updateHUD();
+    }
+
+    function nextLevel() {
+        if(state.level < 4) state.level++;
+        state.currentTask = 0;
+        showFeedback("Ура! Новый уровень 🏆");
+        updateHUD();
+        setTimeout(pickTarget, 1500);
+    }
+
+    function updateHUD() {
+        document.getElementById('score-val').innerText = state.score;
+        const hearts = document.querySelectorAll('.heart');
+        hearts.forEach((h, idx) => h.classList.toggle('lost', idx >= state.lives));
+        
+        const progress = (state.currentTask / state.totalTasks) * 100;
+        document.getElementById('progress-fill').style.width = progress + "%";
+        
+        const cfg = LVL_CONFIG[Math.min(state.level - 1, LVL_CONFIG.length - 1)];
+        document.getElementById('lvl-name').innerText = cfg.name;
+        document.getElementById('lvl-name').style.color = cfg.color;
+        
+        document.getElementById('lvl-gem-img').src = GEMS[state.level];
+    }
+
+    function gameLoop() {
+        if(!state.isPaused) {
+            state.items.forEach(i => {
+                i.x += i.dx; i.y += i.dy;
+                if(i.x <= 10 || i.x >= window.innerWidth - i.w - 10) i.dx *= -1;
+                if(i.y <= 140 || i.y >= window.innerHeight - i.h - 20) i.dy *= -1;
+                i.el.style.transform = `translate(${i.x}px, ${i.y}px)`;
+            });
+        }
+        requestAnimationFrame(gameLoop);
+    }
+
+    function showFeedback(txt) {
+        const f = document.getElementById('feedback');
+        f.innerHTML = `<div class="feedback-text">${txt}</div>`;
+        const el = f.firstChild;
+        setTimeout(() => el.style.opacity = "0", 800);
+    }
+
+    function pickTarget() {
+        if(state.isPaused) return;
+        const t = state.items[Math.floor(Math.random() * state.items.length)];
+        state.target = t.word;
+        speak(state.target);
+    }
+
+    function speak(txt) {
+        if (!window.speechSynthesis) return;
+        window.speechSynthesis.cancel();
+        const msg = new SpeechSynthesisUtterance(txt);
+        msg.lang = 'en-US';
+        msg.rate = 0.85;
+        window.speechSynthesis.speak(msg);
+    }
+
+    window.onload = () => {
+        updatePreview();
+        updateHUD();
+    };
+</script>
+</body>
+</html>
